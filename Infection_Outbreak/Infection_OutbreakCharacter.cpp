@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Infection_OutbreakCharacter.h"
 #include "Engine/LocalPlayer.h"

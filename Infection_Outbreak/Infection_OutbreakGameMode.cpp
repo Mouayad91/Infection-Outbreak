@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Infection_OutbreakGameMode.h"
 #include "Infection_OutbreakCharacter.h"
