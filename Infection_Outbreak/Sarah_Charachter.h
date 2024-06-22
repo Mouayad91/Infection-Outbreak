@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -37,6 +35,9 @@ protected:
 	*/
 	void LookUp(float Rate);
 
+	/*func that fire weapons*/
+	void ShootWeap();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -68,6 +69,19 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	float LookUpRate;
 
+
+	/*SFX */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight , meta = (AllowPrivateAccess = "true"))
+	class USoundCue* ShootSfx;
+	
+	/*VFX */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight, meta = (AllowPrivateAccess = "true"))
+	class UParticleSystem* ShootVFX;
+	
+	/*Shoot montage for the gun*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight, meta = (AllowPrivateAccess = "true"))
+	class UAnimMontage* ShootMontage;
+	
 public:
 
 	// to return the Uspringarmcomponent type a puplic getter

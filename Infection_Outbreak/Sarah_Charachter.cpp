@@ -1,8 +1,10 @@
-
-
 #include "Sarah_Charachter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h" 
+#include "Kismet/GameplayStatics.h" 
+#include "Sound/SoundCue.h" 
+#include "Engine/SkeletalMeshSocket.h" 
 
 
 // Sets default values (Constructor)
@@ -24,14 +26,27 @@ ASarah_Charachter::ASarah_Charachter() :
 	SpringArm->bUsePawnControlRotation = true;
 
 
-	/*Player camera et up*/
+	/*Player camera set up*/
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	// Attach camera to the end of the springarm
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	// Camera must follow springarm rotation so = flase
 	Camera->bUsePawnControlRotation = false;
 
+
+	//stop rotation on controller rotation
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	// character movement configuration
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 520.f,0.f);
+	GetCharacterMovement()->JumpZVelocity = 500.f;
+	GetCharacterMovement()->AirControl = 0.3f;
 }
+
+
 
 // Called when the game starts or when spawned
 void ASarah_Charachter::BeginPlay()
@@ -81,6 +96,41 @@ void ASarah_Charachter::LookUp(float Rate)
 
 }
 
+void ASarah_Charachter::ShootWeap()
+{
+
+	//UE_LOG(LogTemp, Warning, TEXT("Is firing "));
+
+	if (ShootSfx) {
+
+		UGameplayStatics::PlaySound2D(this, ShootSfx);
+	}
+
+	const USkeletalMeshSocket* Socket_VFX = GetMesh()->GetSocketByName("Shoot_VFX");
+
+	if (Socket_VFX) {
+
+		const FTransform SocketTransform = Socket_VFX->GetSocketTransform(GetMesh());
+
+		if (ShootSfx) {
+
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShootVFX, SocketTransform);
+		}
+
+
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+		if (AnimInstance && ShootMontage) {
+
+		
+			AnimInstance->Montage_Play(ShootMontage);
+			AnimInstance->Montage_JumpToSection(FName("FireStart"));
+		}
+
+	}
+
+}
+
 // Called every frame
 void ASarah_Charachter::Tick(float DeltaTime)
 {
@@ -108,6 +158,9 @@ void ASarah_Charachter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	// Jump Input
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	
+	
+	PlayerInputComponent->BindAction("ShootBtn", IE_Pressed, this, &ASarah_Charachter::ShootWeap);
 
 }
 
