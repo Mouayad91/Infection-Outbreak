@@ -5,7 +5,7 @@
 #include "Kismet/GameplayStatics.h" 
 #include "Sound/SoundCue.h" 
 #include "Engine/SkeletalMeshSocket.h" 
-
+#include "DrawDebugHelpers.h"
 
 // Sets default values (Constructor)
 ASarah_Charachter::ASarah_Charachter() :
@@ -115,6 +115,29 @@ void ASarah_Charachter::ShootWeap()
 		if (ShootSfx) {
 
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ShootVFX, SocketTransform);
+		}
+
+
+		FHitResult ShootHit;
+		const FVector begins{ SocketTransform.GetLocation() };
+		const FQuat Rotation{ SocketTransform.GetRotation() };
+		const FVector RotationAxis{ Rotation.GetAxisX() };
+		const FVector TraceEnd{ begins + RotationAxis * 40'000.f };
+
+		GetWorld()->LineTraceSingleByChannel(ShootHit,begins, TraceEnd,ECollisionChannel::ECC_Visibility);
+
+		if (ShootHit.bBlockingHit) {
+
+			DrawDebugLine(GetWorld(), begins, TraceEnd, FColor::Red, false,3.f);
+
+			DrawDebugPoint(GetWorld(), ShootHit.Location, 5.f,FColor::Yellow, false,3.f);
+
+			if (HitParticles) {
+
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticles, ShootHit.Location);
+
+
+			}
 		}
 
 

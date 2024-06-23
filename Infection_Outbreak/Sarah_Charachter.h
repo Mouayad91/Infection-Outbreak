@@ -81,6 +81,11 @@ private:
 	/*Shoot montage for the gun*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight, meta = (AllowPrivateAccess = "true"))
 	class UAnimMontage* ShootMontage;
+
+
+	/*Hit impact particles spawns on hiting objs*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight, meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* HitParticles;
 	
 public:
 
