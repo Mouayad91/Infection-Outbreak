@@ -6,6 +6,7 @@
 #include "Sound/SoundCue.h" 
 #include "Engine/SkeletalMeshSocket.h" 
 #include "DrawDebugHelpers.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values (Constructor)
 ASarah_Charachter::ASarah_Charachter() :
@@ -24,7 +25,7 @@ ASarah_Charachter::ASarah_Charachter() :
 	SpringArm->TargetArmLength = 350.f;
 	//Rotate springarm whenever controller moved
 	SpringArm->bUsePawnControlRotation = true;
-
+	SpringArm->SocketOffset = FVector(0.f, 50.f, 50.f);
 
 	/*Player camera set up*/
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -34,7 +35,7 @@ ASarah_Charachter::ASarah_Charachter() :
 	Camera->bUsePawnControlRotation = false;
 
 
-	//stop rotation on controller rotation
+	//stop rotation on controller rotation just on YAW true
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -118,19 +119,91 @@ void ASarah_Charachter::ShootWeap()
 		}
 
 
+		// Get Screen location
+		FVector2D ViewportSize;
+
+		if (GEngine && GEngine->GameViewport) {
+
+			GEngine->GameViewport->GetViewportSize(ViewportSize);
+
+		}
+
+		FVector2D CHLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+
+		CHLocation.Y -= 50.f;
+		
+		FVector CHPosition;
+		FVector CHDirection;
+
+		bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(this, 0),
+			CHLocation, CHPosition, CHDirection);
+
+
+		if (bScreenToWorld) {
+
+			FHitResult TraceHit;
+			const FVector Begins{ CHPosition };
+			const FVector Ends{ 
+				CHPosition + CHDirection * 60000.f };
+
+			FVector SmokeEndPoint{ Ends };
+
+			GetWorld()->LineTraceSingleByChannel (TraceHit,
+				Begins,
+				Ends, 
+				ECollisionChannel::ECC_Visibility);
+
+			if (TraceHit.bBlockingHit) {
+
+				SmokeEndPoint = TraceHit.Location;
+				if (HitParticles) {
+
+					UGameplayStatics::SpawnEmitterAtLocation
+					(GetWorld(), HitParticles, TraceHit.Location);
+				}
+			}
+			
+			if (HitParticles) {
+
+
+				UParticleSystemComponent* BSmoke = UGameplayStatics::SpawnEmitterAtLocation(
+					GetWorld(), 
+					BulletSmoke, 
+					SocketTransform);
+
+				if (BSmoke) {
+
+					BSmoke->SetVectorParameter(FName("Target"), SmokeEndPoint);
+				}
+
+			}
+
+		}
+
+
+
+
+
+		/*
 		FHitResult ShootHit;
 		const FVector begins{ SocketTransform.GetLocation() };
 		const FQuat Rotation{ SocketTransform.GetRotation() };
 		const FVector RotationAxis{ Rotation.GetAxisX() };
 		const FVector TraceEnd{ begins + RotationAxis * 40'000.f };
+		
+		FVector SmokeEnd{ TraceEnd };
+
 
 		GetWorld()->LineTraceSingleByChannel(ShootHit,begins, TraceEnd,ECollisionChannel::ECC_Visibility);
 
 		if (ShootHit.bBlockingHit) {
 
-			DrawDebugLine(GetWorld(), begins, TraceEnd, FColor::Red, false,3.f);
+			//DrawDebugLine(GetWorld(), begins, TraceEnd, FColor::Red, false,3.f);
 
-			DrawDebugPoint(GetWorld(), ShootHit.Location, 5.f,FColor::Yellow, false,3.f);
+			//DrawDebugPoint(GetWorld(), ShootHit.Location, 5.f,FColor::Yellow, false,3.f);
+
+			SmokeEnd = ShootHit.Location;
+
 
 			if (HitParticles) {
 
@@ -138,7 +211,21 @@ void ASarah_Charachter::ShootWeap()
 
 
 			}
+
+			if (BulletSmoke) {
+
+				UParticleSystemComponent* BSmoke = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BulletSmoke, SocketTransform);
+
+				if (BSmoke) {
+
+					BSmoke->SetVectorParameter(FName("Target"), SmokeEnd);
+				}
+			}
+
 		}
+		
+		*/
+		
 
 
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();

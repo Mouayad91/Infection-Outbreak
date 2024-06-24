@@ -86,6 +86,10 @@ private:
 	/*Hit impact particles spawns on hiting objs*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight, meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* HitParticles;
+
+	/*smoke projecttile*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight, meta = (AllowPrivateAccess = "true"))
+	UParticleSystem* BulletSmoke;
 	
 public:
 
