@@ -38,6 +38,8 @@ protected:
 	/*func that fire weapons*/
 	void ShootWeap();
 
+	bool GetSmokeEndLocation(const FVector& ShootSocketLocation, FVector& OutSmokeLocation);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
