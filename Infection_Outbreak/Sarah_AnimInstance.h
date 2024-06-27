@@ -42,5 +42,10 @@ private:
 	/* to check if the player is moving or not*/
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	bool bIsAccelerating;
+
+
+	/*yaw offset for strafing*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Movement, meta = (AllowPrivateAccess = "true"))
+	float MovementOffset;
 	
 };

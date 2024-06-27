@@ -36,11 +36,11 @@ ASarah_Charachter::ASarah_Charachter() :
 
     //stop rotation on controller rotation just on YAW true
     bUseControllerRotationPitch = false;
-    bUseControllerRotationYaw = false;
+    bUseControllerRotationYaw = true;
     bUseControllerRotationRoll = false;
 
     // character movement configuration
-    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->bOrientRotationToMovement = false;
     GetCharacterMovement()->RotationRate = FRotator(0.f, 520.f, 0.f);
     GetCharacterMovement()->JumpZVelocity = 500.f;
     GetCharacterMovement()->AirControl = 0.3f;
