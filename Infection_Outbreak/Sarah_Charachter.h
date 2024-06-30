@@ -40,6 +40,15 @@ protected:
 
 	bool GetSmokeEndLocation(const FVector& ShootSocketLocation, FVector& OutSmokeLocation);
 
+
+	/*aiming funcs true is aiming, false is not*/
+
+	void AimingBtnPressed();
+
+	void AimingBtnReleased();
+
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -92,6 +101,14 @@ private:
 	/*smoke projecttile*/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight, meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* BulletSmoke;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Fight, meta = (AllowPrivateAccess="true"))
+	bool bIsAiming;
+
+	/*Default Camera FOV*/
+	float CameraFieldOfView;
+
+	float CameraZoom;
 	
 public:
 

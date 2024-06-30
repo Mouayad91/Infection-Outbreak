@@ -12,7 +12,10 @@
 ASarah_Charachter::ASarah_Charachter() :
 
     TurnRate(45.f),
-    LookUpRate(45.f)
+    LookUpRate(45.f),
+    bIsAiming(false),
+    CameraFieldOfView(0.f), //set default camera field of veiw 0 on begin play
+    CameraZoom(65.f)
 
 {
     // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -50,6 +53,11 @@ ASarah_Charachter::ASarah_Charachter() :
 void ASarah_Charachter::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (Camera) {
+
+        CameraFieldOfView = getCamera()->FieldOfView;
+    }
 }
 
 void ASarah_Charachter::MoveForward(float value)
@@ -192,6 +200,25 @@ bool ASarah_Charachter::GetSmokeEndLocation(const FVector& ShootSocketLocation, 
     return false;
 }
 
+void ASarah_Charachter::AimingBtnPressed()
+{
+
+
+    bIsAiming = true;
+    getCamera()->SetFieldOfView(CameraZoom);
+
+
+}
+
+void ASarah_Charachter::AimingBtnReleased()
+{
+
+    bIsAiming = false;
+
+    getCamera()->SetFieldOfView(CameraFieldOfView);
+
+}
+
 // Called every frame
 void ASarah_Charachter::Tick(float DeltaTime)
 {
@@ -220,4 +247,14 @@ void ASarah_Charachter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
     PlayerInputComponent->BindAction("ShootBtn", IE_Pressed, this, &ASarah_Charachter::ShootWeap);
+
+    
+    /*Aimin btns*/
+    PlayerInputComponent->BindAction("Aiming", IE_Pressed, this, &ASarah_Charachter::AimingBtnPressed);
+    PlayerInputComponent->BindAction("Aiming", IE_Released, this, &ASarah_Charachter::AimingBtnReleased);
+
+
+
+
+
 }

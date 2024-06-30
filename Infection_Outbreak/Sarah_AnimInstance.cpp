@@ -45,6 +45,13 @@ void USarah_AnimInstance::UpdateAnimationSetting(float DeltaTime)
 			MovementRotation, AimingRotation
 		).Yaw;
 		
+
+		if (Sarah_Character->GetVelocity().Size() > 0.f) {
+
+			YawLastOffset = MovementOffset;
+
+		}
+
 		//FString RotateMessage = FString::Printf(TEXT("Base Aim Rotation : %f") ,AimingRotation.Yaw);
 		//FString RotateMessages = FString::Printf(TEXT("MovementRoation : %f"), MovementRotation.Yaw);
 
@@ -57,6 +64,8 @@ void USarah_AnimInstance::UpdateAnimationSetting(float DeltaTime)
 		}
 		*/
 		
+
+
 	}
 
 }
