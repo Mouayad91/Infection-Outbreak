@@ -47,6 +47,8 @@ protected:
 
 	void AimingBtnReleased();
 
+	void CameraZoomInterp(float DeltaTime);
+
 
 
 public:	
@@ -109,7 +111,12 @@ private:
 	float CameraFieldOfView;
 
 	float CameraZoom;
+
+	float CameraCurrValueFOV;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight, meta = (AllowPrivateAccess = "true"))
+	float ZoomSpeed;
+
 public:
 
 	// to return the Uspringarmcomponent type a puplic getter

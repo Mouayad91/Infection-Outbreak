@@ -15,7 +15,9 @@ ASarah_Charachter::ASarah_Charachter() :
     LookUpRate(45.f),
     bIsAiming(false),
     CameraFieldOfView(0.f), //set default camera field of veiw 0 on begin play
-    CameraZoom(65.f)
+    CameraZoom(40.f),
+    CameraCurrValueFOV(0.f),
+    ZoomSpeed(25.f)
 
 {
     // Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -25,10 +27,10 @@ ASarah_Charachter::ASarah_Charachter() :
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
     SpringArm->SetupAttachment(RootComponent);
     // camera follow distance
-    SpringArm->TargetArmLength = 350.f;
+    SpringArm->TargetArmLength = 190.f;
     //Rotate springarm whenever controller moved
     SpringArm->bUsePawnControlRotation = true;
-    SpringArm->SocketOffset = FVector(0.f, 50.f, 50.f);
+    SpringArm->SocketOffset = FVector(0.f, 50.f, 80.f);
 
     /*Player camera set up*/
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -57,6 +59,7 @@ void ASarah_Charachter::BeginPlay()
     if (Camera) {
 
         CameraFieldOfView = getCamera()->FieldOfView;
+        CameraCurrValueFOV = CameraFieldOfView;
     }
 }
 
@@ -200,29 +203,46 @@ bool ASarah_Charachter::GetSmokeEndLocation(const FVector& ShootSocketLocation, 
     return false;
 }
 
+/*Zooming funcs*/
 void ASarah_Charachter::AimingBtnPressed()
 {
 
-
     bIsAiming = true;
-    getCamera()->SetFieldOfView(CameraZoom);
-
-
 }
 
 void ASarah_Charachter::AimingBtnReleased()
 {
-
     bIsAiming = false;
+}
 
-    getCamera()->SetFieldOfView(CameraFieldOfView);
 
+/*Handel Zoom Aiming*/
+void ASarah_Charachter::CameraZoomInterp(float DeltaTime)
+{
+
+
+    if (bIsAiming) {
+
+        CameraCurrValueFOV = FMath::FInterpTo(CameraCurrValueFOV, CameraZoom, DeltaTime, ZoomSpeed);
+
+    }
+    else {
+
+        CameraCurrValueFOV = FMath::FInterpTo(CameraCurrValueFOV, CameraFieldOfView, DeltaTime, ZoomSpeed);
+
+    }
+
+    getCamera()->SetFieldOfView(CameraCurrValueFOV);
 }
 
 // Called every frame
 void ASarah_Charachter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+
+    CameraZoomInterp(DeltaTime);
+
 }
 
 // Called to bind functionality to input
